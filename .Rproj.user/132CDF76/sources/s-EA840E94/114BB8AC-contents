@@ -1,0 +1,23 @@
+library(shiny)
+library(rworldmap)
+worldmap <- getMap(resolution = "low")
+
+ui <- shiny::htmlTemplate("www/index.html",
+
+    # Leaflet map
+    leaflet_map = leaflet::leafletOutput(outputId = "map") |>
+     shinycssloaders::withSpinner(color="#0dc5c1")
+  )
+
+
+server <- function(input, output, session) {
+
+  output$map <- leaflet::renderLeaflet({
+    leaflet::leaflet(worldmap) |>
+      leaflet::addTiles() |>
+      leaflet::addPolygons()
+  })
+
+}
+
+shinyApp(ui, server)

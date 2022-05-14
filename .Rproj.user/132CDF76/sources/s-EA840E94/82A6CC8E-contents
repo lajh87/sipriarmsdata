@@ -1,0 +1,13 @@
+export_tiv <- readr::read_csv("data/export_tiv.csv")
+
+export_tiv |>
+  dplyr::filter(Year != "Total") |>
+  dplyr::filter(Export_From != "All") |>
+  dplyr::filter(Import_To != "All") |>
+  dplyr::filter(Import_To != "Total") |>
+  dplyr::mutate(Year = as.numeric(Year)) |>
+  dplyr::filter(Year >= 2011) |>
+  dplyr::group_by(Export_From, Import_To) |>
+  dplyr::summarise(TIV = sum(TIV, na.rm = TRUE))
+
+

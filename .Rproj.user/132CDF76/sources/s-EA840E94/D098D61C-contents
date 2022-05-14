@@ -1,0 +1,24 @@
+import_tiv <- readr::read_csv("data/import_tiv.csv")
+
+import_tiv <- import_tiv |>
+  dplyr::filter(Export_From != "Total") |>
+  dplyr::filter(Import_To != "All") |>
+  dplyr::filter(Year != "Total") |>
+  dplyr::select(2, 1, 3:4) |>
+  dplyr::mutate(Year = as.numeric(Year)) |>
+  dplyr::arrange(Export_From, Import_To, Year)
+
+import_tiv <- import_tiv |>
+  dplyr::group_by(from = Export_From, to = Import_To) |>
+  dplyr::summarise(value = sum(TIV))
+
+import_tiv <- import_tiv |> dplyr::arrange(dplyr::desc(value))
+
+library(ggraph)
+
+ggraph(import_tiv |> dplyr::filter(value>10), layout = "linear") +
+  geom_edge_arc(aes( edge_alpha = value) ) +
+  geom_node_point() +
+  theme_void() + theme(legend.position = "none")
+
+
